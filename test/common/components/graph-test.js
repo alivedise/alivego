@@ -51,3 +51,32 @@ test('Normal graph BFS', assert => {
   g.bfs();
   assert.deepEqual(g.blackQueue, ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'i', 'j', 'k']);
 });
+
+test('Normal graph: has no route', assert => {
+  var g = new Graph([
+    new Vertex('a', ['b', 'c', 'd']),
+    new Vertex('b'),
+    new Vertex('c'),
+    new Vertex('d')
+  ]);
+  assert.is(g.hasRoute(), false);
+  
+});
+
+test('Normal graph: has route', assert => {
+  var g = new Graph([
+    new Vertex('a', ['b', 'c', 'd']),
+    new Vertex('b', ['e', 'f']),
+    new Vertex('c', []),
+    new Vertex('d', ['g']),
+    new Vertex('e', ['i', 'j', 'k']),
+    new Vertex('f'),
+    new Vertex('g'),
+    new Vertex('i'),
+    new Vertex('j'),
+    new Vertex('k', ['a'])
+  ]);
+
+  assert.is(g.hasRoute(), true);
+});
+

@@ -8,11 +8,15 @@ export class Vertex {
     // For BFS
     this.state = 'w'; // white
   }
+  toString() {
+    return this.id;
+  };
   setVisited(visited) {
     this.visited = visited;
   };
   setManager(manager) {
     this.manager = manager;
+    this.neighbors = this.getNeighbors();
   };
   getNeighbors() {
     if (!this.manager) {
@@ -22,8 +26,18 @@ export class Vertex {
       return this.manager.getVertex(id)
     }, this);
   };
-  setNeighbor(v) {
-    this.neighbors.push(v);
+  hasRoute() {
+    return this.neighbors.some(function(n) {
+      if (n.state === 'w') {
+        n.markAsGrey();
+        return n.hasRoute();
+      } else if (n.state === 'grey') {
+        n.markAsBlack();
+        return true;
+      } else {
+        return true;
+      }
+    });
   };
   visit() {
     if (this.visited) {
@@ -64,6 +78,9 @@ export class Graph {
     this.idMap = new Map();
     this.vertices.forEach(function(v) {
       this.idMap.set(v.id, v);
+    }, this);
+    this.vertices.forEach(function(v) {
+      v.setManager(this);
     }, this);
   };
   visit(v) {
@@ -114,5 +131,14 @@ export class Graph {
       v.markAsBlack();
       this.blackQueue.push(v.id);
     }
+  };
+  hasRoute() {
+    this.vertices.forEach(function(v) {
+      v.setManager(this);
+      v.markAsWhite();
+    }, this);
+    return this.vertices.some(function(v) {
+      return v.hasRoute();
+    });
   };
 };
